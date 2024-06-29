@@ -1,0 +1,49 @@
+-- Create tables
+CREATE TABLE company (
+    id SERIAL PRIMARY KEY,
+    company_name VARCHAR(255),
+    company_code VARCHAR(50) UNIQUE
+);
+
+CREATE TABLE employee (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    username VARCHAR(50) UNIQUE,
+    email VARCHAR(255) UNIQUE,
+    hash_password TEXT,
+    phone VARCHAR(15),
+    isAdmin BOOLEAN,
+    company_id INT REFERENCES company(id)
+);
+
+CREATE TABLE project (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    company_id INT REFERENCES company(id)
+);
+
+CREATE TABLE client (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    username VARCHAR(50) UNIQUE,
+    email VARCHAR(255) UNIQUE,
+    hash_password TEXT,
+    phone VARCHAR(15),
+    company_id INT REFERENCES company(id)
+);
+
+-- Create junction tables for many-to-many relationships
+CREATE TABLE project_client (
+    project_id INT REFERENCES project(id),
+    client_id INT REFERENCES client(id),
+    PRIMARY KEY (project_id, client_id)
+);
+
+CREATE TABLE project_employee (
+    project_id INT REFERENCES project(id),
+    employee_id INT REFERENCES employee(id),
+    PRIMARY KEY (project_id, employee_id)
+);
+
+-- Optionally, specify the masteremployee for company
+ALTER TABLE company ADD masteremployee_id INT REFERENCES employee(id);
