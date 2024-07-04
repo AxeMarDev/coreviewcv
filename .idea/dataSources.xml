@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/coreview</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="postgres@deadly-jesting-constrictor.data-1.use1.tembo.io" uuid="ed4a0ddb-e43e-4997-a486-07538c6c3d91">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://deadly-jesting-constrictor.data-1.use1.tembo.io:5432/postgres</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

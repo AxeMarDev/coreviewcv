@@ -24,12 +24,13 @@ func InitDB() *sql.DB {
 
 	fmt.Println("loaded enviroment")
 
-	dbpath := fmt.Sprintf("user=%s dbname=%s host=%s port=%s sslmode=%s",
+	dbpath := fmt.Sprintf("user=%s  password=%s dbname=%s host=%s port=%s",
 		os.Getenv("DBUSER"),
+		os.Getenv("DBPASSWORD"), // Retrieving password from environment variable
 		os.Getenv("DBNAME"),
 		os.Getenv("DBHOST"),
 		os.Getenv("DBPORT"),
-		os.Getenv("DBSSL"))
+	)
 
 	fmt.Println("connected to database")
 
