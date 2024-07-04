@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"log"
 	"time"
 )
 
@@ -27,9 +28,17 @@ func main() {
 
 	routes.Routes(router)
 
-	err := router.Run("localhost:8080")
-
+	log.Println("Starting HTTPS server on https://localhost:443...")
+	err := router.RunTLS(":443", "/etc/letsencrypt/live/railiant-appservice.app/fullchain.pem", "/etc/letsencrypt/live/railiant-appservice.app/privkey.pem")
 	if err != nil {
-		fmt.Println("fatal error")
+
+		log.Println("Starting HTTP server on https://localhost:8080...")
+		err = router.Run("localhost:8080")
+
+		if err != nil {
+			fmt.Println("fatal error")
+		}
 	}
 }
+
+
