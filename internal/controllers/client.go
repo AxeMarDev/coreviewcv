@@ -93,6 +93,14 @@ func DeleteClient(c *gin.Context) {
 
 	id := c.Query("id")
 
+	// Delete all entries in project_client referencing the project
+	deleteProjectClientsQuery := `DELETE FROM project_client WHERE client_id = $1`
+	if _, err := db.Exec(deleteProjectClientsQuery, id); err != nil {
+		log.Printf("Error while deleting project clients: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete project clients"})
+		return
+	}
+
 	// Execute the delete query
 	query := `DELETE FROM client WHERE id = $1`
 	result, err := db.Exec(query, id)
