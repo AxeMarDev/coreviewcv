@@ -141,3 +141,48 @@ func DeleteProject(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "project deleted successfully"})
 
 }
+
+func UpdateProjectName(c *gin.Context) {
+
+	var db *sql.DB
+	db = database.Db
+
+	type parameters struct {
+		NewName string `json:"newName"`
+	}
+
+	var urlParams parameters
+
+	projectID := c.Param("project_id")
+
+	// Bind the received JSON to newPerson
+	if err := c.ShouldBindJSON(&urlParams); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error when binding name"})
+		return
+	}
+
+	query := `UPDATE project SET  name = $1 WHERE id = $2`
+	result, err := db.Exec(query, urlParams.NewName, projectID)
+
+	if err != nil {
+		log.Printf("Error while deleting person: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update project"})
+		return
+	}
+
+	// Check how many rows were affected
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("Error getting rows affected: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error checking deletion result"})
+		return
+	}
+
+	if rowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "No project found with the provided ID"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Message updated successfully"})
+
+}

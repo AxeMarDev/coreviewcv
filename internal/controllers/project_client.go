@@ -11,6 +11,38 @@ import (
 	"net/http"
 )
 
+func DeleteClientsFromProject(c *gin.Context) {
+	var db *sql.DB
+	db = database.Db
+
+	clientID := c.Param("client_id")
+	projectID := c.Param("project_id")
+
+	query := `DELETE FROM project_client WHERE client_id = $1 AND project_id = $2`
+	result, err := db.Exec(query, clientID, projectID)
+	if err != nil {
+		log.Printf("Error while deleting client: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete employee<->project relation where employee"})
+		return
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Printf("Error getting rows affected: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error checking deletion result"})
+		return
+	}
+
+	if rowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "No client found with the provided ID"})
+		return
+	}
+
+	// Return success message
+	c.JSON(http.StatusOK, gin.H{"message": "client deleted successfully"})
+
+}
+
 func AddClientToProject(c *gin.Context) {
 
 	var db *sql.DB
