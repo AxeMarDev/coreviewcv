@@ -17,6 +17,8 @@ func Routes(router *gin.Engine) {
 	router.POST("/a/client", authenticator.JWTAuthMiddleware(), controllers.AddClient)
 	router.DELETE("/a/client", authenticator.JWTAuthMiddleware(), controllers.DeleteClient)
 
+	router.GET("/a/client/:client_id", authenticator.JWTAuthMiddleware(), controllers.GetClient)
+
 	router.PATCH("/a/project/:project_id/name", authenticator.JWTAuthMiddleware(), controllers.UpdateProjectName)
 	router.GET("/a/project/:project_id/client", authenticator.JWTAuthMiddleware(), controllers.GetProjectClients)
 	router.GET("/a/project/:project_id/employee", authenticator.JWTAuthMiddleware(), controllers.GetProjectEmployees)

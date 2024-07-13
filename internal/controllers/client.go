@@ -126,3 +126,27 @@ func DeleteClient(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "client deleted successfully"})
 
 }
+
+func GetClient(c *gin.Context) {
+
+	var db *sql.DB
+	db = database.Db
+
+	clientID := c.Param("client_id")
+	companyId, _ := c.Get("company_id")
+
+	row := db.QueryRow("SELECT id, name, company_id FROM project WHERE id = ($1) AND company_id = ($2)", clientID, companyId)
+
+	var projects models.Project
+
+	var p models.Project
+	if err := row.Scan(&p.ID, &p.Name, &p.Companyid); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to scan client"})
+		fmt.Println("Failed to scan client")
+		return
+	}
+	projects = p
+
+	c.IndentedJSON(http.StatusOK, projects)
+
+}
