@@ -6,4 +6,5 @@ type Blog struct {
 	Subtitle   string `json:"subtitle"`
 	AuthorId   int    `json:"author_id"`
 	DatePoster int    `json:"date_posted"`
+	Imageurl   string `json:"imageurl"`
 }

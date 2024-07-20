@@ -17,6 +17,39 @@ sudo lsof -i :443                           // this will check if any process is
 
 to pg_dump
 
+
+
 pg_dump -U axellmartinez -h localhost -d coreview --no-owner -s -f schema.sql
 psql 'postgresql://postgres:0bzO8C6yAJwF46MJ@deadly-jesting-constrictor.data-1.use1.tembo.io:5432/postgres' -f schema.sql
 
+
+
+// might have to pg_dump data, then clear table using the following
+
+DO $$
+DECLARE
+    r RECORD;
+    ext_exists BOOLEAN;
+BEGIN
+    -- Check if pg_stat_statements extension exists
+    SELECT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pg_stat_statements') INTO ext_exists;
+
+    -- Drop all tables in the 'public' schema
+    FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public') LOOP
+        EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
+    END LOOP;
+
+    -- Drop all sequences in the 'public' schema
+    FOR r IN (SELECT sequence_name FROM information_schema.sequences WHERE sequence_schema = 'public') LOOP
+        EXECUTE 'DROP SEQUENCE IF EXISTS ' || quote_ident(r.sequence_name) || ' CASCADE';
+    END LOOP;
+
+    -- Drop all routines (functions and procedures) in the 'public' schema, excluding those related to pg_stat_statements if the extension exists
+    IF NOT ext_exists THEN
+        FOR r IN (SELECT routine_name FROM information_schema.routines WHERE routine_schema = 'public') LOOP
+            EXECUTE 'DROP FUNCTION IF EXISTS ' || quote_ident(r.routine_name) || ' CASCADE';
+        END LOOP;
+    ELSE
+        RAISE NOTICE 'Skipping drop of functions related to pg_stat_statements extension.';
+    END IF;
+END $$;

@@ -16,9 +16,10 @@ func GetBlogs(c *gin.Context) {
 	var db *sql.DB
 	db = database.Db
 
-	rows, err := db.Query("SELECT id, title, subtitle FROM blogs ORDER BY id ASC ")
+	rows, err := db.Query("SELECT id, title, subtitle, imageurl FROM blogs ORDER BY id ASC ")
 
 	if err != nil {
+		log.Printf("Error while getting blog: %v", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query blogs"})
 		return
 	}
@@ -34,7 +35,7 @@ func GetBlogs(c *gin.Context) {
 
 	for rows.Next() {
 		var p models.Blog
-		if err := rows.Scan(&p.ID, &p.Title, &p.Subtitle); err != nil {
+		if err := rows.Scan(&p.ID, &p.Title, &p.Subtitle, &p.Imageurl); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to scan person"})
 			return
 		}
@@ -60,9 +61,9 @@ func AddBlog(c *gin.Context) {
 	}
 
 	// Insert newPerson into the database
-	query := `INSERT INTO blogs (title, subtitle, author_id, date_posted) VALUES ($1, $2, $3, $4) RETURNING id`
+	query := `INSERT INTO blogs (title, subtitle, author_id, date_posted, imageurl) VALUES ($1, $2, $3, $4, $5) RETURNING id`
 	var id int
-	err := db.QueryRow(query, newBlog.Title, newBlog.Subtitle, Id, time.Now()).Scan(&id)
+	err := db.QueryRow(query, newBlog.Title, newBlog.Subtitle, Id, time.Now(), newBlog.Imageurl).Scan(&id)
 
 	if err != nil {
 		log.Printf("Error while inserting new blog: %v", err.Error())

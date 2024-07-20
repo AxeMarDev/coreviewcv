@@ -29,7 +29,8 @@ CREATE TABLE public.blogs (
     title character varying(255) NOT NULL,
     subtitle character varying(255),
     author_id integer NOT NULL,
-    date_posted date NOT NULL
+    date_posted date NOT NULL,
+    imageurl character varying(255)
 );
 
 
