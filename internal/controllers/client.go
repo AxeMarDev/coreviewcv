@@ -135,18 +135,21 @@ func GetClient(c *gin.Context) {
 	clientID := c.Param("client_id")
 	companyId, _ := c.Get("company_id")
 
-	row := db.QueryRow("SELECT id, name, company_id FROM project WHERE id = ($1) AND company_id = ($2)", clientID, companyId)
+	fmt.Println(clientID)
+	fmt.Println(companyId)
 
-	var projects models.Project
+	row := db.QueryRow("SELECT id, name, company_id FROM client WHERE id = ($1)", clientID)
 
-	var p models.Project
+	var client models.Client
+
+	var p models.Client
 	if err := row.Scan(&p.ID, &p.Name, &p.Companyid); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to scan client"})
 		fmt.Println("Failed to scan client")
 		return
 	}
-	projects = p
+	client = p
 
-	c.IndentedJSON(http.StatusOK, projects)
+	c.IndentedJSON(http.StatusOK, client)
 
 }

@@ -9,9 +9,10 @@ notes
 to run in background i did the following
 
 nohup go run ./cmd/backendcv/main.go &
-echo $!                         //  You can find the process ID (PID) of the running application by checking
-ps aux | grep main.go           // this will check if it is running
-kill [PID]                      // this  will kill process
+echo $!                                     //  You can find the process ID (PID) of the running application by checking
+ps aux | grep main.go                       // this will check if it is running
+kill [PID]                                  // this  will kill process
+sudo lsof -i :443                           // this will check if any process is running in certain port
 
 
 to pg_dump

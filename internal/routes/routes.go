@@ -12,6 +12,15 @@ func Routes(router *gin.Engine) {
 	router.POST("/register", controllers.Register)
 	router.POST("/employee-auth", controllers.EmployeeAuth)
 	router.POST("/client-auth", controllers.ClientAuth)
+	router.POST("/admin-auth", controllers.AdminAuth)
+
+	router.POST("/admin-register", controllers.AdminRegister)
+
+	router.POST("/internal/login")
+
+	router.GET("/blog", controllers.GetBlogs)
+	router.POST("/blog", authenticator.JWTAuthMiddleware(), controllers.AddBlog)
+	router.DELETE("/blog/:blog_id", authenticator.JWTAuthMiddleware(), controllers.DeleteBlog)
 
 	router.GET("/a/client", authenticator.JWTAuthMiddleware(), controllers.GetClients)
 	router.POST("/a/client", authenticator.JWTAuthMiddleware(), controllers.AddClient)

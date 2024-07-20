@@ -16,6 +16,14 @@ CREATE TABLE employee (
     company_id INT REFERENCES company(id)
 );
 
+CREATE TABLE companyadmin (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    username VARCHAR(50) UNIQUE,
+    email VARCHAR(255) UNIQUE,
+    hash_password TEXT
+);
+
 CREATE TABLE project (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255),
@@ -44,6 +52,20 @@ CREATE TABLE project_employee (
     employee_id INT REFERENCES employee(id),
     PRIMARY KEY (project_id, employee_id)
 );
+
+CREATE TABLE blogs (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    subtitle VARCHAR(255),
+    author_id INTEGER NOT NULL,
+    date_posted DATE NOT NULL
+);
+
+ALTER TABLE blogs
+ADD CONSTRAINT fk_author
+FOREIGN KEY (author_id)
+REFERENCES companyadmin(id)
+ON DELETE CASCADE;
 
 -- Optionally, specify the masteremployee for company
 ALTER TABLE company ADD masteremployee_id INT REFERENCES employee(id);
