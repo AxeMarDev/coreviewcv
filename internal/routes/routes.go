@@ -9,24 +9,24 @@ import (
 
 func Routes(router *gin.Engine) {
 
+	router.GET("/blog", controllers.GetBlogs)
 	router.POST("/register", controllers.Register)
 	router.POST("/employee-auth", controllers.EmployeeAuth)
 	router.POST("/client-auth", controllers.ClientAuth)
 	router.POST("/admin-auth", controllers.AdminAuth)
-
 	router.POST("/admin-register", controllers.AdminRegister)
-
 	router.POST("/internal/login")
-
-	router.GET("/blog", controllers.GetBlogs)
 	router.POST("/blog", authenticator.JWTAuthMiddleware(), controllers.AddBlog)
 	router.DELETE("/blog/:blog_id", authenticator.JWTAuthMiddleware(), controllers.DeleteBlog)
-
 	router.GET("/a/client", authenticator.JWTAuthMiddleware(), controllers.GetClients)
 	router.POST("/a/client", authenticator.JWTAuthMiddleware(), controllers.AddClient)
 	router.DELETE("/a/client", authenticator.JWTAuthMiddleware(), controllers.DeleteClient)
 
 	router.GET("/a/client/:client_id", authenticator.JWTAuthMiddleware(), controllers.GetClient)
+
+	router.POST("/a/project/:project_id/files", authenticator.JWTAuthMiddleware(), controllers.AddFile)
+	router.GET("/a/project/:project_id/files", authenticator.JWTAuthMiddleware(), controllers.GetFiles)
+	router.GET("/a/project/:project_id/files/:file_id", authenticator.JWTAuthMiddleware(), controllers.GetFile)
 
 	router.PATCH("/a/project/:project_id/name", authenticator.JWTAuthMiddleware(), controllers.UpdateProjectName)
 	router.GET("/a/project/:project_id/client", authenticator.JWTAuthMiddleware(), controllers.GetProjectClients)

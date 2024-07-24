@@ -191,6 +191,43 @@ ALTER SEQUENCE public.employee_id_seq OWNED BY public.employee.id;
 
 
 --
+-- Name: files; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.files (
+    image_id integer NOT NULL,
+    project_id integer NOT NULL,
+    file_name character varying NOT NULL,
+    s3_bucket character varying NOT NULL,
+    s3_key character varying NOT NULL,
+    mime_type character varying NOT NULL,
+    size bigint,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+--
+-- Name: images_image_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.images_image_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: images_image_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.images_image_id_seq OWNED BY public.files.image_id;
+
+
+--
 -- Name: project; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -274,6 +311,13 @@ ALTER TABLE ONLY public.companyadmin ALTER COLUMN id SET DEFAULT nextval('public
 --
 
 ALTER TABLE ONLY public.employee ALTER COLUMN id SET DEFAULT nextval('public.employee_id_seq'::regclass);
+
+
+--
+-- Name: files image_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.files ALTER COLUMN image_id SET DEFAULT nextval('public.images_image_id_seq'::regclass);
 
 
 --
@@ -380,6 +424,14 @@ ALTER TABLE ONLY public.employee
 
 
 --
+-- Name: files images_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.files
+    ADD CONSTRAINT images_pkey PRIMARY KEY (image_id);
+
+
+--
 -- Name: project_client project_client_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -433,6 +485,14 @@ ALTER TABLE ONLY public.employee
 
 ALTER TABLE ONLY public.blogs
     ADD CONSTRAINT fk_author FOREIGN KEY (author_id) REFERENCES public.companyadmin(id) ON DELETE CASCADE;
+
+
+--
+-- Name: files images_project_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.files
+    ADD CONSTRAINT images_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.project(id);
 
 
 --

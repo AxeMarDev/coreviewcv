@@ -138,7 +138,7 @@ func GetClient(c *gin.Context) {
 	fmt.Println(clientID)
 	fmt.Println(companyId)
 
-	row := db.QueryRow("SELECT id, name, company_id FROM client WHERE id = ($1)", clientID)
+	row := db.QueryRow("SELECT id, name, company_id FROM client  WHERE id = ($1) ", clientID)
 
 	var client models.Client
 
