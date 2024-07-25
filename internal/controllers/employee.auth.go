@@ -71,6 +71,7 @@ func EmployeeAuth(c *gin.Context) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["username"] = newAuth.Username
 	claims["company_id"] = companyID
+	claims["id"] = userID
 	claims["account_type"] = "employee"
 	claims["exp"] = time.Now().Add(time.Hour * 1000).Unix()
 

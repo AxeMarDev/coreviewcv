@@ -39,8 +39,11 @@ func GetProjects(c *gin.Context) {
 	db = database.Db
 
 	companyId, _ := c.Get("company_id")
+	requestorId, _ := c.Get("id")
 
-	rows, err := db.Query("SELECT id, name, company_id FROM project WHERE company_id = ($1) ORDER BY id ASC ", companyId)
+	//rows, err := db.Query("SELECT id, name, company_id FROM project WHERE company_id = ($1) ORDER BY id ASC ", companyId)
+
+	rows, err := db.Query("SELECT p.id, p.name, p.company_id FROM project p JOIN project_employee pe ON p.id = pe.project_id WHERE pe.employee_id = $1 AND p.company_id = $2 ORDER BY p.id DESC; ", requestorId, companyId)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query projects"})
@@ -77,8 +80,10 @@ func AddProject(c *gin.Context) {
 	db = database.Db
 
 	companyId, _ := c.Get("company_id")
+	requestorId, _ := c.Get("id")
 
-	fmt.Println(companyId)
+	fmt.Println("requestor id:")
+	fmt.Println(requestorId)
 
 	// Bind the received JSON to newPerson
 	if err := c.ShouldBindJSON(&newProject); err != nil {
@@ -94,6 +99,40 @@ func AddProject(c *gin.Context) {
 	if err != nil {
 		log.Printf("Error while inserting new project: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add new project"})
+		return
+	}
+
+	// Insert clientID and projectID into the database
+	query = `INSERT INTO project_employee (project_id, employee_id) VALUES ($1, $2)`
+	_, err = db.Exec(query, id, requestorId)
+
+	if err != nil {
+		log.Printf("Error while inserting new relation (Employee <-> Project): %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while inserting new relation (Employee <-> Project) for requestor"})
+		return
+	}
+
+	row := db.QueryRow("SELECT masteremployee_id FROM company  WHERE id = ($1) ", companyId)
+
+	type masterEmployeeId struct {
+		MasterID string `json:"masteremployee_id"`
+	}
+
+	var m masterEmployeeId
+
+	if err := row.Scan(&m.MasterID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get ADMIN"})
+		fmt.Println("Failed to scan ADMIN")
+		return
+	}
+
+	// Insert clientID and projectID into the database
+	query = `INSERT INTO project_employee (project_id, employee_id) VALUES ($1, $2)`
+	_, err = db.Exec(query, id, m.MasterID)
+
+	if err != nil {
+		log.Printf("Error while inserting new relation (Employee <-> Project): %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error while inserting new relation (Employee <-> Project) for ADMIN"})
 		return
 	}
 

@@ -86,6 +86,7 @@ func Register(c *gin.Context) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["name"] = newCompany.Username
 	claims["company_id"] = company_id
+	claims["id"] = idNew
 	claims["exp"] = time.Now().Add(time.Hour * 1000).Unix()
 
 	t, err := token.SignedString([]byte("your_secret_key"))
