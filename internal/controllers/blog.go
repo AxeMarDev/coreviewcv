@@ -13,8 +13,7 @@ import (
 
 func GetBlogs(c *gin.Context) {
 
-	var db *sql.DB
-	db = database.Db
+	db := database.Db
 
 	rows, err := db.Query("SELECT id, title, subtitle, imageurl FROM blogs ORDER BY id ASC ")
 
@@ -47,12 +46,12 @@ func GetBlogs(c *gin.Context) {
 }
 
 func AddBlog(c *gin.Context) {
+
 	var newBlog models.Blog
 
 	Id, _ := c.Get("id")
 
-	var db *sql.DB
-	db = database.Db
+	db := database.Db
 
 	// Bind the received JSON to newPerson
 	if err := c.ShouldBindJSON(&newBlog); err != nil {
@@ -77,8 +76,7 @@ func AddBlog(c *gin.Context) {
 
 func DeleteBlog(c *gin.Context) {
 
-	var db *sql.DB //
-	db = database.Db
+	db := database.Db
 
 	id := c.Param("blog_id")
 

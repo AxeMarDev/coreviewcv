@@ -20,7 +20,7 @@ func GetClients(c *gin.Context) {
 
 	fmt.Println(companyId)
 
-	rows, err := db.Query("SELECT id, name, username, email, phone, company_id FROM client WHERE company_id = ($1) ORDER BY id ASC ", companyId)
+	rows, err := db.Query("SELECT id, name, username, email, phone, company_id FROM client WHERE company_id = ($1) ORDER BY id ", companyId)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query clients"})
